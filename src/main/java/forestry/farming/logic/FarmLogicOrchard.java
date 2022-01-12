@@ -42,6 +42,7 @@ import forestry.core.utils.vect.Vect;
 import forestry.core.utils.vect.VectUtil;
 import forestry.plugins.PluginCore;
 import forestry.plugins.PluginManager;
+import scala.Console;
 
 public class FarmLogicOrchard extends FarmLogic {
 
@@ -125,9 +126,11 @@ public class FarmLogicOrchard extends FarmLogic {
 		Stack<ICrop> crops = new Stack<>();
 
 		Vect position = translateWithOffset(x, y + 1, z, direction, lastExtent);
-		if (target.getTick() % 20 == 0)
+		target.incTick();
+		if (target.getTick() % 200 == 0)
 		{
 			target.setCache(getHarvestBlocks(position));
+			System.out.println("building cache for "+position.x+" "+position.y+" "+position.z);
 		}
 		for (Vect element :target.getCache()) {
 			ICrop crop = getCrop(getWorld(), element);
