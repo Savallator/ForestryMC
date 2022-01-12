@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
 
+import forestry.farming.FarmTarget;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLog;
 import net.minecraft.init.Items;
@@ -89,7 +90,7 @@ public class FarmLogicCocoa extends FarmLogic {
 	private final HashMap<Vect, Integer> lastExtentsCultivation = new HashMap<>();
 
 	@Override
-	public boolean cultivate(int x, int y, int z, FarmDirection direction, int extent) {
+	public boolean cultivate(FarmTarget target, int x, int y, int z, FarmDirection direction, int extent) {
 
 		Vect start = new Vect(x, y, z);
 		if (!lastExtentsCultivation.containsKey(start)) {
@@ -113,7 +114,7 @@ public class FarmLogicCocoa extends FarmLogic {
 	private final HashMap<Vect, Integer> lastExtentsHarvest = new HashMap<>();
 
 	@Override
-	public Collection<ICrop> harvest(int x, int y, int z, FarmDirection direction, int extent) {
+	public Collection<ICrop> harvest(FarmTarget target, int x, int y, int z, FarmDirection direction, int extent) {
 
 		Vect start = new Vect(x, y, z);
 		if (!lastExtentsHarvest.containsKey(start)) {

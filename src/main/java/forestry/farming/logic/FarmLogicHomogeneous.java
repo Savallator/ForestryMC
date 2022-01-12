@@ -13,6 +13,7 @@ package forestry.farming.logic;
 import java.util.ArrayList;
 import java.util.List;
 
+import forestry.farming.FarmTarget;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -74,7 +75,7 @@ public abstract class FarmLogicHomogeneous extends FarmLogic {
 	}
 
 	@Override
-	public boolean cultivate(int x, int y, int z, FarmDirection direction, int extent) {
+	public boolean cultivate(FarmTarget target, int x, int y, int z, FarmDirection direction, int extent) {
 
 		if (maintainSoil(x, y, z, direction, extent)) {
 			return true;

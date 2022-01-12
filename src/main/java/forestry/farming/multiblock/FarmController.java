@@ -665,7 +665,7 @@ public class FarmController extends RectangularMultiblockControllerBase implemen
 
 	private static boolean cultivateTarget(FarmTarget target, IFarmLogic logic, Iterable<IFarmListener> farmListeners) {
 		Vect targetPosition = target.getStart().add(0, target.getYOffset(), 0);
-		if (logic.cultivate(targetPosition.x, targetPosition.y, targetPosition.z, target.getDirection(), target.getExtent())) {
+		if (logic.cultivate(target, targetPosition.x, targetPosition.y, targetPosition.z, target.getDirection(), target.getExtent())) {
 			for (IFarmListener listener : farmListeners) {
 				listener.hasCultivated(logic, targetPosition.x, targetPosition.y, targetPosition.z, target.getDirection(), target.getExtent());
 			}
@@ -689,7 +689,7 @@ public class FarmController extends RectangularMultiblockControllerBase implemen
 	}
 
 	private static Collection<ICrop> harvestTarget(FarmTarget target, IFarmLogic logic, Iterable<IFarmListener> farmListeners) {
-		Collection<ICrop> harvested = logic.harvest(target.getStart().x, target.getStart().y + target.getYOffset(), target.getStart().z, target.getDirection(), target.getExtent());
+		Collection<ICrop> harvested = logic.harvest(target, target.getStart().x, target.getStart().y + target.getYOffset(), target.getStart().z, target.getDirection(), target.getExtent());
 		if (harvested == null || harvested.size() == 0) {
 			return Collections.emptyList();
 		}

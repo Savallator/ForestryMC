@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import forestry.farming.FarmTarget;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -72,7 +73,7 @@ public abstract class FarmLogicWatered extends FarmLogic {
 	}
 
 	@Override
-	public boolean cultivate(int x, int y, int z, FarmDirection direction, int extent) {
+	public boolean cultivate(FarmTarget target, int x, int y, int z, FarmDirection direction, int extent) {
 
 		if (maintainSoil(x, y, z, direction, extent)) {
 			return true;

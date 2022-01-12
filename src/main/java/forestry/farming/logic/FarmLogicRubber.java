@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
 
+import forestry.farming.FarmTarget;
 import net.minecraft.block.Block;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -93,14 +94,14 @@ public class FarmLogicRubber extends FarmLogic {
 	}
 
 	@Override
-	public boolean cultivate(int x, int y, int z, FarmDirection direction, int extent) {
+	public boolean cultivate(FarmTarget target, int x, int y, int z, FarmDirection direction, int extent) {
 		return false;
 	}
 
 	private final HashMap<Vect, Integer> lastExtents = new HashMap<>();
 
 	@Override
-	public Collection<ICrop> harvest(int x, int y, int z, FarmDirection direction, int extent) {
+	public Collection<ICrop> harvest(FarmTarget target, int x, int y, int z, FarmDirection direction, int extent) {
 		if (inActive) {
 			return null;
 		}

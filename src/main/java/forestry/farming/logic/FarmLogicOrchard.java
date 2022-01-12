@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
+import forestry.farming.FarmTarget;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -105,12 +106,12 @@ public class FarmLogicOrchard extends FarmLogic {
 	}
 
 	@Override
-	public boolean cultivate(int x, int y, int z, FarmDirection direction, int extent) {
+	public boolean cultivate(FarmTarget target, int x, int y, int z, FarmDirection direction, int extent) {
 		return false;
 	}
 
 	@Override
-	public Collection<ICrop> harvest(int x, int y, int z, FarmDirection direction, int extent) {
+	public Collection<ICrop> harvest(FarmTarget target, int x, int y, int z, FarmDirection direction, int extent) {
 
 		Vect start = new Vect(x, y, z);
 		if (!lastExtents.containsKey(start)) {
@@ -121,9 +122,19 @@ public class FarmLogicOrchard extends FarmLogic {
 		if (lastExtent > extent) {
 			lastExtent = 0;
 		}
+		Stack<ICrop> crops = new Stack<>();
 
 		Vect position = translateWithOffset(x, y + 1, z, direction, lastExtent);
-		Collection<ICrop> crops = getHarvestBlocks(position);
+		if (target.getTick() % 20 == 0)
+		{
+			target.setCache(getHarvestBlocks(position));
+		}
+		for (Vect element :target.getCache()) {
+			ICrop crop = getCrop(getWorld(), element);
+			if (crop != null) {
+				crops.push(crop);
+			}
+		}
 		lastExtent++;
 		lastExtents.put(start, lastExtent);
 
@@ -141,33 +152,31 @@ public class FarmLogicOrchard extends FarmLogic {
 		return "Orchard";
 	}
 
-	private Collection<ICrop> getHarvestBlocks(Vect position) {
+	private Collection<Vect> getHarvestBlocks(Vect position) {
 
 		Set<Vect> seen = new HashSet<>();
-		Stack<ICrop> crops = new Stack<>();
-
+		Stack<Vect> cropList = new Stack<>();
 		World world = getWorld();
 
 		// Determine what type we want to harvest.
-		if (!VectUtil.isWoodBlock(world, position) && !isBlockTraversable(world, position, traversalBlocks) && !isFruitBearer(world, position)) {
-			return crops;
+		if (!VectUtil.isWoodBlock(world, position) && !isBlockTraversable(world, null, position, traversalBlocks) && !isFruitBearer(world, position)) {
+			return cropList;
 		}
 
-		List<Vect> candidates = processHarvestBlock(crops, seen, position, position);
+		List<Vect> candidates = processHarvestBlock(cropList, seen, position, position);
 		List<Vect> temp = new ArrayList<>();
-		while (!candidates.isEmpty() && crops.size() < 20) {
+		while (!candidates.isEmpty() && cropList.size() < 20) {
 			for (Vect candidate : candidates) {
-				temp.addAll(processHarvestBlock(crops, seen, position, candidate));
+				temp.addAll(processHarvestBlock(cropList, seen, position, candidate));
 			}
 			candidates.clear();
 			candidates.addAll(temp);
 			temp.clear();
 		}
-
-		return crops;
+		return cropList;
 	}
 
-	private List<Vect> processHarvestBlock(Stack<ICrop> crops, Set<Vect> seen, Vect start, Vect position) {
+	private List<Vect> processHarvestBlock(Stack<Vect> crops, Set<Vect> seen, Vect start, Vect position) {
 		World world = getWorld();
 
 		List<Vect> candidates = new ArrayList<>();
@@ -183,25 +192,21 @@ public class FarmLogicOrchard extends FarmLogic {
 					if (Math.abs(candidate.z - start.z) > 5) {
 						continue;
 					}
-
 					// See whether the given position has already been processed
 					if (seen.contains(candidate)) {
 						continue;
 					}
-					if (VectUtil.isAirBlock(world, candidate)) {
+					Block target = VectUtil.getBlock(world, candidate);
+					if (target.isAir(world, candidate.x, candidate.y, candidate.z)) {
 						continue;
 					}
-					if (VectUtil.isWoodBlock(world, candidate) || isBlockTraversable(world, candidate, traversalBlocks)) {
+					if (target.isWood(world, candidate.x, candidate.y, candidate.z) || isBlockTraversable(world, target, candidate, traversalBlocks)) {
 						candidates.add(candidate);
 						seen.add(candidate);
 					} else if (isFruitBearer(world, candidate)) {
 						candidates.add(candidate);
 						seen.add(candidate);
-
-						ICrop crop = getCrop(world, candidate);
-						if (crop != null) {
-							crops.push(crop);
-						}
+						crops.push(candidate);
 					}
 				}
 			}
@@ -226,9 +231,8 @@ public class FarmLogicOrchard extends FarmLogic {
 		return false;
 	}
 
-	private static boolean isBlockTraversable(World world, Vect position, ImmutableList<Block> traversalBlocks) {
+	private static boolean isBlockTraversable(World world, Block candidate, Vect position, ImmutableList<Block> traversalBlocks) {
 
-		Block candidate = VectUtil.getBlock(world, position);
 		for (Block block : traversalBlocks) {
 			if (block == (candidate)) {
 				return true;

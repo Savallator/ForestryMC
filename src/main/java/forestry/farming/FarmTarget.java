@@ -10,6 +10,7 @@
  ******************************************************************************/
 package forestry.farming;
 
+import forestry.api.farming.ICrop;
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
 
@@ -18,12 +19,16 @@ import forestry.core.utils.vect.MutableVect;
 import forestry.core.utils.vect.Vect;
 import forestry.core.utils.vect.VectUtil;
 
+import java.util.Collection;
+import java.util.Stack;
+
 public class FarmTarget {
 
 	private final Vect start;
 	private final FarmDirection direction;
 	private final int limit;
-
+	private Collection<Vect> cachedCrops;
+	private int updateTicks = 0;
 	private int yOffset;
 	private int extent;
 
@@ -31,10 +36,35 @@ public class FarmTarget {
 		this.start = start;
 		this.direction = direction;
 		this.limit = limit;
+		this.cachedCrops = new Stack<>();
 	}
-
+	public void clearCache()
+	{
+		this.cachedCrops.clear();
+	}
+	public void addCache(Vect crop)
+	{
+		this.cachedCrops.add(crop);
+	}
+	public void setCache (Collection<Vect> cache)
+	{
+		this.cachedCrops = cache;
+	}
+	public Collection<Vect> getCache()
+	{
+		return this.cachedCrops;
+	}
 	public Vect getStart() {
 		return start;
+	}
+
+	public void incTick ()
+	{
+		updateTicks++;
+	}
+	public int getTick()
+	{
+		return updateTicks;
 	}
 
 	public int getYOffset() {

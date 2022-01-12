@@ -7,6 +7,7 @@ package forestry.api.farming;
 
 import java.util.Collection;
 
+import forestry.farming.FarmTarget;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
@@ -26,9 +27,9 @@ public interface IFarmLogic {
 
 	Collection<ItemStack> collect();
 
-	boolean cultivate(int x, int y, int z, FarmDirection direction, int extent);
+	boolean cultivate(FarmTarget target, int x, int y, int z, FarmDirection direction, int extent);
 
-	Collection<ICrop> harvest(int x, int y, int z, FarmDirection direction, int extent);
+	Collection<ICrop> harvest(FarmTarget target, int x, int y, int z, FarmDirection direction, int extent);
 
 	IFarmLogic setManual(boolean manual);
 
